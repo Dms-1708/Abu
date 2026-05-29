@@ -204,4 +204,216 @@ function SiteHeader() {
   );
 }
 
-*** End Patch
+function Hero(props: { bestReasoning: string; bestCost: string; bestOpen: string }) {
+  return (
+    <section id="top" className="mx-auto max-w-7xl px-5 pb-12 pt-10 md:px-8 md:pb-16">
+      <div className="grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">
+        <div>
+          <p className="mb-3 inline-flex rounded-full border border-black/10 bg-white px-3 py-1 text-xs uppercase tracking-[0.2em] text-neutral-500">
+            ABU-Präsentation
+          </p>
+          <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-balance md:text-6xl">
+            DeepSeek erklärt: Modelle, Stärken und was man lokal hosten kann
+          </h1>
+          <p className="mt-5 max-w-2xl text-lg leading-8 text-neutral-700">
+            Eine kompakte Übersicht über DeepSeek, den Vergleich mit anderen KI-Modellen und die Frage,
+            welche Modelle auf einem normalen Rechner wirklich sinnvoll sind.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3 text-sm">
+            <span className="rounded-full bg-black px-4 py-2 text-white">Beste Reasoning: {props.bestReasoning}</span>
+            <span className="rounded-full border border-black/10 bg-white px-4 py-2">Beste Kosten: {props.bestCost}</span>
+            <span className="rounded-full border border-black/10 bg-white px-4 py-2">Am offensten: {props.bestOpen}</span>
+          </div>
+        </div>
+        <div className="rounded-[2rem] border border-black/10 bg-white p-6 shadow-[0_25px_80px_rgba(0,0,0,0.08)]">
+          <p className="text-sm uppercase tracking-[0.18em] text-neutral-500">Kurzfazit</p>
+          <div className="mt-4 space-y-4 text-sm leading-6 text-neutral-700">
+            <p>DeepSeek ist besonders stark bei logischem Denken, Mathematik und Programmieren.</p>
+            <p>Viele neuere Modelle sind noch nicht endgültig einzuordnen, weil sich Leistung und Preise schnell ändern.</p>
+            <p>Für das lokale Hosting sind kleine bis mittlere Modelle interessant, große Modelle brauchen viel Hardware.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function QuickOverview() {
+  return (
+    <section id="ueberblick" className="mx-auto max-w-7xl px-5 py-10 md:px-8">
+      <div className="grid gap-4 md:grid-cols-3">
+        <OverviewCard title="Worum geht es?" text="DeepSeek ist ein KI-Modell, das vor allem bei Reasoning und Coding auffällt." />
+        <OverviewCard title="Was ist wichtig?" text="Nicht nur Leistung zählt, sondern auch Kosten, Offenheit und lokale Nutzbarkeit." />
+        <OverviewCard title="Was zeigt die Seite?" text="Stärken, Vergleich, lokale Hardware-Anforderungen und eine kleine Zeitleiste." />
+      </div>
+    </section>
+  );
+}
+
+function OverviewCard(props: { title: string; text: string }) {
+  return (
+    <article className="rounded-[1.5rem] border border-black/10 bg-white p-5 shadow-sm">
+      <h2 className="text-lg font-semibold">{props.title}</h2>
+      <p className="mt-2 text-sm leading-6 text-neutral-700">{props.text}</p>
+    </article>
+  );
+}
+
+function StrengthSection(props: { strengths: Array<{ label: string; value: number; description: string }> }) {
+  return (
+    <section id="leistung" className="mx-auto max-w-7xl px-5 py-10 md:px-8">
+      <SectionHeading title="Stärken" text="Die folgenden Werte sind eine einfache Einordnung für die Präsentation." />
+      <div className="mt-6 grid gap-4 md:grid-cols-2">
+        {props.strengths.map((item) => (
+          <article key={item.label} className="rounded-[1.5rem] border border-black/10 bg-white p-5">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="font-semibold">{item.label}</h3>
+              <span className="rounded-full bg-[#f7f4ee] px-3 py-1 text-sm">{item.value}%</span>
+            </div>
+            <div className="mt-4 h-2 rounded-full bg-black/10">
+              <div className="h-2 rounded-full bg-black" style={{ width: `${item.value}%` }} />
+            </div>
+            <p className="mt-3 text-sm text-neutral-700">{item.description}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function ComparisonSection(props: { models: Model[] }) {
+  return (
+    <section id="vergleich" className="mx-auto max-w-7xl px-5 py-10 md:px-8">
+      <SectionHeading title="Vergleich" text="Ein grober Vergleich zwischen DeepSeek und anderen bekannten Modellen." />
+      <div className="mt-6 grid gap-4">
+        {props.models.map((model) => (
+          <article key={model.model} className="rounded-[1.5rem] border border-black/10 bg-white p-5 md:p-6">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="text-lg font-semibold">{model.model}</h3>
+                <p className="text-sm text-neutral-500">{model.origin}</p>
+              </div>
+              <span className="rounded-full bg-[#f7f4ee] px-3 py-1 text-xs uppercase tracking-[0.18em] text-neutral-600">
+                {model.tag}
+              </span>
+            </div>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-neutral-700">{model.text}</p>
+            <div className="mt-5 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+              {[
+                ["Reasoning", model.reasoning],
+                ["Coding", model.coding],
+                ["Creativity", model.creativity],
+                ["Privacy", model.privacy],
+                ["Openness", model.openness],
+                ["Cost", model.cost],
+              ].map(([label, value]) => (
+                <Metric key={label as string} label={label as string} value={value as number} />
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function Metric(props: { label: string; value: number }) {
+  return (
+    <div className="rounded-2xl bg-[#f7f4ee] p-4">
+      <p className="text-xs uppercase tracking-[0.16em] text-neutral-500">{props.label}</p>
+      <p className="mt-2 text-2xl font-semibold">{props.value}</p>
+    </div>
+  );
+}
+
+function HostingSection(props: { hosting: HostingOption[] }) {
+  return (
+    <section id="lokal" className="mx-auto max-w-7xl px-5 py-10 md:px-8">
+      <SectionHeading title="Lokal hosten" text="Was man mit unterschiedlichen Rechnern sinnvoll ausführen kann." />
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        {props.hosting.map((item) => (
+          <article key={item.title} className="rounded-[1.5rem] border border-black/10 bg-white p-5">
+            <div className="flex items-center justify-between gap-4">
+              <h3 className="text-lg font-semibold">{item.title}</h3>
+              <span className="rounded-full border border-black/10 px-3 py-1 text-xs uppercase tracking-[0.16em] text-neutral-500">
+                {item.level}
+              </span>
+            </div>
+            <div className="mt-4 space-y-2 text-sm text-neutral-700">
+              <p><strong>Hardware:</strong> {item.hardware}</p>
+              <p><strong>Geeignet für:</strong> {item.model}</p>
+              <p>{item.text}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CriticalSection() {
+  return (
+    <section id="fazit" className="mx-auto max-w-7xl px-5 py-10 md:px-8">
+      <SectionHeading title="Einordnung" text="Warum das Ganze nicht nur nach Benchmarks beurteilt werden sollte." />
+      <div className="mt-6 rounded-[1.5rem] border border-black/10 bg-[#f3efe7] p-6 text-sm leading-7 text-neutral-700">
+        <p>
+          Modelle wie DeepSeek sind spannend, aber die beste Wahl hängt immer vom Einsatzzweck ab:
+          gute Leistung, wenig Kosten, lokaler Betrieb oder maximale Qualität sind nicht dasselbe Ziel.
+        </p>
+        <p className="mt-4">
+          Für die Schule oder eine Präsentation ist ein verständlicher Überblick meist wichtiger als ein perfekter technischer Tiefgang.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function TimelineSection(props: { timeline: Array<{ year: string; title: string; text: string }> }) {
+  return (
+    <section className="mx-auto max-w-7xl px-5 py-10 md:px-8">
+      <SectionHeading title="Zeitleiste" text="Ein kurzer Überblick über die Entwicklung." />
+      <div className="mt-6 grid gap-4 lg:grid-cols-2">
+        {props.timeline.map((item) => (
+          <article key={item.year} className="rounded-[1.5rem] border border-black/10 bg-white p-5">
+            <p className="text-xs uppercase tracking-[0.18em] text-neutral-500">{item.year}</p>
+            <h3 className="mt-2 text-lg font-semibold">{item.title}</h3>
+            <p className="mt-2 text-sm leading-6 text-neutral-700">{item.text}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function PresentationSection() {
+  return (
+    <section className="mx-auto max-w-7xl px-5 py-10 md:px-8">
+      <div className="rounded-[2rem] border border-black/10 bg-black px-6 py-8 text-white md:px-8">
+        <p className="text-xs uppercase tracking-[0.2em] text-white/70">Präsentation</p>
+        <h2 className="mt-3 text-2xl font-semibold md:text-3xl">DeepSeek ist stark, aber nicht in jedem Szenario die beste Wahl.</h2>
+        <p className="mt-3 max-w-3xl text-sm leading-7 text-white/80">
+          Für Reasoning und Coding ist DeepSeek spannend, für lokale Nutzung braucht man passende Hardware,
+          und der Vergleich mit anderen Modellen hängt immer vom Einsatz ab.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className="border-t border-black/10 py-8 text-center text-sm text-neutral-500">
+      ABU-Projekt über DeepSeek
+    </footer>
+  );
+}
+
+function SectionHeading(props: { title: string; text: string }) {
+  return (
+    <div className="max-w-3xl">
+      <p className="text-xs uppercase tracking-[0.18em] text-neutral-500">{props.title}</p>
+      <h2 className="mt-2 text-2xl font-semibold md:text-3xl">{props.title}</h2>
+      <p className="mt-2 text-sm leading-7 text-neutral-700">{props.text}</p>
+    </div>
+  );
+}
